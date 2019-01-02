@@ -19,7 +19,7 @@ class PostController extends Controller
 
     //all posts
     function posts(){
-    	$posts = Post::with('author','claps','comments')->get();
+    	$posts = Post::all();
     	return response()->json($posts);
     }
 
@@ -31,38 +31,52 @@ class PostController extends Controller
 
     //create post
     function newPost(Request $req){
+
+       $this->authorize('create',Post::class);
          
        $validator = Validator::make($req->all(),
                                 ['title'=>'required|max:255',
-                                'content'=>'required'
+                                'content'=>'required|max:255'
                                 ]);
 
 
        if($validator->fails()){
-        return response()->json(['error'=>true,'error'=>$validator->errors()]);
+        return response()->json(['success'=>false,'error'=>$validator->errors()]);
        }
 
         $post = new Post();
 
         $image = $req->file('image');
         if(empty($image)){
-            return response()->json(['error'=>true,'message'=>'Image is required!']);
+            return response()->json(['success'=>false,'message'=>'Image is required!']);
         }
         $path  = $post->storeImage($image);
+
+        $publish = $req->get('publish'); 
     	
     	$post->title = $req->get('title');
     	$post->content = $req->get('content');
     	$post->url = $path;
 
-    	$user = Auth::user();
-    	$user->posts()->save($post);
+        if($publish == 'true' ){
+            $post->publish();
+        }else{
+            $post->unPublish();
+        }
 
-    	return response()->json(['error'=>false,'message'=>'Post created!']);
+    	$user = Auth::user();
+        $post->author = $user->id;
+
+        $post->save();
+
+    	return response()->json(['success'=>true,'message'=>'Post created!']);
     }
 
     //updatePost
 
     function updatePost(Request $req, $id){
+
+
 
     	$validator = Validator::make($req->all(),
                                 ['title'=>'required|max:255',
@@ -71,7 +85,11 @@ class PostController extends Controller
 
         $image = $req->file('image'); 
 
+        $publish = $req->get('publish'); 
+
     	$post = Post::find($id);
+
+        $this->authorize('update',$post);
 
         if($image != null){
             //drop
@@ -82,60 +100,84 @@ class PostController extends Controller
     	$post->title = $req->get('title');
     	$post->content = $req->get('content');
 
+        if($publish == 'true'){
+            $post->publish();
+        }else{
+            $post->unPublish();
+        }
+
     	$post->save();
-    	return response()->json(['status'=>'success',
-            'message'=>'Post updated!']);
+    	return response()->json(['success'=>true,
+            'message'=>'Post updated!','post'=>$post]);
 
     }
 
     //deletepost
     function deletePost($id){
     	$post = Post::find($id);
+        $this->authorize('update',$post);
+
         if($post){
             $post->dropImage($post->url);
             $post->delete(); 
         }
     	
-    	return response()->json(['status'=>'success',
+    	return response()->json(['success'=>true,
             'message'=>'Post deleted!']);
     }
-
+    
     //comment on a post
 
     function comment(Request $req,$id){
-    	$req->validate($req->all(),[
-    		'body'=>'required'
-    	]);
+    	$validator = Validator::
+                   make($req->all(),
+                        ['body'=>'required|max:255'
+                        ]);
+
+
+       if($validator->fails()){
+        return response()->json(['success'=>false,'error'=>$validator->errors()]);
+       }
+
     	//post 
     	$post = Post::find($id);
 
     	//comment
     	$post->comments()->create([
-                  'body' => $request->get('body'),
-                  'commenter' => Auth::user(),
+                  'body' => $req->get('body'),
+                  'commenter' => Auth::user()->id,
             ]);
-        return response()->json(['status'=>'success','message'=>'Commented!']);
+        return response()->json(['success'=>true,'message'=>'Commented!']);
 
     }
    
     //update comment
     function updateComment(Request $req, $id){
-    	$req->validate($req->all(),[
-    		'body'=>'required'
-    	]);
+    	$validator = Validator::
+                   make($req->all(),
+                        ['body'=>'required|max:255'
+                        ]);
+
+
+       if($validator->fails()){
+        return response()->json(['success'=>false,'error'=>$validator->errors()]);
+       }
 
     	$comment = Comment::find($id);
+
+        $this->authorize('update',$comment);
     	$comment->body = $req->get('body');
     	$comment->save();
-    	return response()->json(['status'=>'success','message'=>'Comment updated!']);
+    	return response()->json(['success'=>true,'message'=>'Comment updated!']);
     }
 
     //delete comment
     function deleteComment($id){
 
     	$comment = Comment::find($id);
+        $this->authorize('update',$comment);
     	$comment->delete();
-    	return response()->json(['status'=>'success','message'=>'Comment deleted!']);
+    	return response()->json(['success'=>true,'message'=>'Comment deleted!']);
     }
 
     //upclap---like
@@ -145,20 +187,19 @@ class PostController extends Controller
         $clap = Clap::where('clapper',Auth::user()->id)
                       ->where('clapable_id',$post->id)
                       ->first();
-        if($clap){
+        if($clap !== null){
 
             $clap->clap = true;
             $clap->save(); 
 
         }else{
-    	
-        	$post->claps()->create([
-        		'clap'=> true,
-        		'clapper'=> Auth::user()
-        	]);
+    	    $clap = new Clap();
+            $clap->clap = true;
+            $clap->clapper = Auth::user()->id;
+            $post->claps()->save($clap);
         }
 
-        return response()->json(['status'=>'success','message'=>'Liked!']);
+        return response()->json(['success'=>true,'message'=>'Liked!']);
 
     }
 
@@ -178,11 +219,11 @@ class PostController extends Controller
         
             $post->claps()->create([
                 'clap'=> false,
-                'clapper'=> Auth::user()
+                'clapper'=> Auth::user()->id
             ]);
         }
 
-        return response()->json(['status'=>'success','message'=>'disLiked!']);
+        return response()->json(['success'=>true,'message'=>'disLiked!']);
 
     }
 }

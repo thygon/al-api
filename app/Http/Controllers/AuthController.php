@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Password;
 use Validator, Hash, Mail;
 use Response;
 use App\User;
+use App\Profile;
 use JWTFactory;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -22,6 +23,37 @@ class AuthController extends Controller
         return response()->json($logged);
     }
 
+    public function setProfile(Request $req){
+     
+        $image = $req->file('picture');
+
+        if(empty($image)){
+            return response()->json(['success'=>false,'message'=>'Image is required!']);
+        }
+
+        $user = Auth::user();
+        $profile = $user->profile()->get();
+
+        if($profile->count() !== 0){
+            //update
+            $path  = $profile->storeImage($image);
+            $profile->profile = $path;
+            //more info
+            $profile->save();
+
+            return response()->json(['success'=>true,'message'=>'Profile Updated!']);
+
+        }
+        $profile = new profile(); 
+        $path  = $profile->storeImage($image);
+        $profile->profile = $path;
+        //more info
+
+        $user->profile()->save($profile);
+
+        return response()->json(['success'=>true,'message'=>'Profile Created!']);
+
+    }
 
     public function login(Request $request)
     {
@@ -36,12 +68,12 @@ class AuthController extends Controller
 
         try {
             if (! $token = JWTAuth::attempt($credentials)) {
-                return response()->json(['error' =>true,'message' => 'invalid_credentials'], 401);
+                return response()->json(['success' =>false,'message' => 'invalid_credentials'], 200);
             }
         } catch (JWTException $e) {
-            return response()->json(['error' =>true,'message' => 'could_not_create_token'], 500);
+            return response()->json(['success' =>false,'message' => 'could_not_create_token'], 200);
         }
-        return response()->json(['error' =>false,'message'=>'Welcome back '.Auth::user()->name,'token'=>$token,'user'=>Auth::user()]);
+        return response()->json(['success' =>true,'message'=>'Welcome back '.Auth::user()->name,'token'=>$token,'user'=>Auth::user()]);
     }
 
 
@@ -64,14 +96,13 @@ class AuthController extends Controller
         $user = User::first();
         $token = JWTAuth::fromUser($user);
         
-         return response()->json(['token'=>$token,'user'=>Auth::user()]);
+         return response()->json(['success'=>true,'token'=>$token,'user'=>Auth::user()]);
     }
 
-    public function logout(){
-    	$this->validate($request, ['token' => 'required']);
-        
+    public function logout(Request $request){
+        $token = $request->bearerToken(); 
         try {
-            JWTAuth::invalidate($request->input('token'));
+            JWTAuth::invalidate($token);
             return response()->json(['success' => true, 'message'=> "You have successfully logged out."]);
         } catch (JWTException $e) {
             // something went wrong whilst attempting to encode the token
@@ -82,11 +113,20 @@ class AuthController extends Controller
 
 
     public function recover(Request $request)
-    {
+    {   
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|string|email'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors());
+        }
+
         $user = User::where('email', $request->email)->first();
+
         if (!$user) {
             $error_message = "Your email address was not found.";
-            return response()->json(['success' => false, 'error' => ['email'=> $error_message]], 401);
+            return response()->json(['success' => false, 'message' => ['email'=> $error_message]], 401);
         }
         try {
             Password::sendResetLink($request->only('email'), function (Message $message) {
@@ -95,7 +135,7 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             //Return with error
             $error_message = $e->getMessage();
-            return response()->json(['success' => false, 'error' => $error_message], 401);
+            return response()->json(['success' => false, 'message' => $error_message], 401);
         }
         return response()->json([
             'success' => true, 'data'=> ['message'=> 'A reset email has been sent! Please check your email.']

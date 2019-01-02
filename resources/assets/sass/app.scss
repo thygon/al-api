@@ -1,9 +1,81 @@
 
 // Fonts
-@import url("https://fonts.googleapis.com/css?family=Raleway:300,400,600");
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:100,400,600,700");
 
-// Variables
-@import "variables";
+//font-awesome
+@import '~@fortawesome/fontawesome-free/css/all.min.css';
 
-// Bootstrap
-@import "~bootstrap-sass/assets/stylesheets/bootstrap";
+@import "~bootstrap/dist/css/bootstrap.min.css";
+
+.page-wrapper{
+    display: flex;
+    align-items: stretch;
+    background: #ccc;
+
+    .page-sidenav{
+    	min-width: 250px;
+        max-width: 250px;
+        min-height: 100vh;
+        background: #fff;
+        color: #fff;
+        transition: all 0.3s;
+
+        a[data-toggle="collapse"] {
+		    position: relative;
+		}
+
+		.dropdown-toggle::after {
+		    display: block;
+		    position: absolute;
+		    top: 50%;
+		    right: 20px;
+		    transform: translateY(-50%);
+		}
+
+        &.active{
+        	margin-left: -250px;
+        }
+
+        .nav{
+        	.nav-item{
+        		padding:0;
+        		margin:0;
+        		.nav-link{
+        			padding:15px;
+        			font-size:1.4em !important;
+        			border-bottom:1px solid #ccc;
+        			&.active{
+        				color:#800000 !important;
+        			}
+        		}
+        	}
+        }
+
+        .page-brand{
+        	background:#800000;
+        }
+    }
+    .page-content{
+    	position:relative;
+    	width:100%;
+
+    	.page-footer{
+    		position: absolute;
+    		bottom:0;
+    		width:100%;
+    		background:#000;
+    		color:#fff;
+    	}
+    }
+
+}
+
+@media (max-width: 768px) {
+    .page-sidenav {
+        margin-left: -250px;
+        &.active{
+        	margin-left: 0px;
+        }
+    }
+    
+}

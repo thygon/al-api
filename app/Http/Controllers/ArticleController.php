@@ -12,7 +12,7 @@ class ArticleController extends Controller
 
     //all articles
     function articles(){
-    	$articles = Article::with('author')->get();
+    	$articles = Article::all();
     	return response()->json($articles);
     }
 
@@ -25,48 +25,73 @@ class ArticleController extends Controller
     //create article
     function newArticle(Request $req){
 
-        $validator = Validator::make($req->all(),[
-            'title'=>'required',
-            'content'=>'required'
-        ]);
-    	
-        if ($validator->fails()) {
-            return response()->json($validator->errors());
-        }
+        $this->authorize('create',Article::class);
+
+        $validator = Validator::make($req->all(),
+                                ['title'=>'required',
+                                'content'=>'required|max:255'
+                                ]);
+
+
+           if($validator->fails()){
+            return response()->json(['success'=>false,'error'=>$validator->errors()]);
+           }
+
+        $publish = $req->get('publish'); 
 
     	$article = new Article();
     	$article->title = $req->get('title');
     	$article->content = $req->get('content');
 
+        if($publish === 'true'){
+            $article->publish();
+        }
+
     	$user = Auth::user();
     	$user->articles()->save($article);
 
-    	return response()->json(['error'=>false,'message'=>'Article created!']);
+    	return response()->json(['success'=>true,'message'=>'Article created!']);
     }
 
     //updateArticle
 
     function updateArticle(Request $req, $id){
 
-    	$req->validate($req->all(),[
-    		'title'=>'required',
-    		'content'=>'required'
-    	]);
+    	$validator = Validator::make($req->all(),
+                                ['title'=>'required',
+                                'content'=>'required|max:255'
+                                ]);
+
+
+           if($validator->fails()){
+            return response()->json(['success'=>false,'error'=>$validator->errors()]);
+           }
+
+        $publish = $req->get('publish'); 
 
     	$article = Article::find($id);
+        $this->authorize('update',$article);
+
     	$article->title = $req->get('title');
     	$article->content = $req->get('content');
 
+        if($publish === 'true'){
+            $article->publish();
+        }else{
+            $article->unPublish();
+        }
+
     	$article->save();
-    	return response()->json(['status'=>'success','message'=>'Article updated!']);
+    	return response()->json(['success'=>true,'message'=>'Article updated!']);
 
     }
 
     //delete
     function deleteArticle($id){
     	$article = Article::find($id);
+        $this->authorize('update',$article);
     	$article->delete(); 
-    	return response()->json(['status'=>'success','message'=>'Article deleted!']);
+    	return response()->json(['success'=>true,'message'=>'Article deleted!']);
     }
 
 }

@@ -36,7 +36,7 @@ class LectureController extends Controller
     	$user = Auth::user();
     	$user->author()->save($lecture);
 
-    	return response()->json(['status'=>'success','message'=>'Lecture created!']);
+    	return response()->json(['success'success,'message'=>'Lecture created!']);
     }
 
     //update
@@ -54,7 +54,7 @@ class LectureController extends Controller
     	$lecture->link = 'path';
 
     	$lecture->save();
-    	return response()->json(['status'=>'success','message'=>'Lecture updated!']);
+    	return response()->json(['success'=>true,'message'=>'Lecture updated!']);
 
     }
 
@@ -63,6 +63,6 @@ class LectureController extends Controller
     	//delete book in link--folder
     	$lecture = Lecture::find($id);
     	$lecture->delete(); 
-    	return response()->json(['status'=>'success','message'=>'Lecture deleted!']);
+    	return response()->json(['success'=>true,'message'=>'Lecture deleted!']);
     }
 }

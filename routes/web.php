@@ -15,3 +15,5 @@ Route::get('/', function () {
     return 'Home';
 });
 
+Route::view('/admin/{path?}/{any?}','admin');
+

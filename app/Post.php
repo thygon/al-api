@@ -10,23 +10,35 @@ class Post extends Model
     //post is an article with an image, comment, replies plus likes and dislikes
 
     protected $fillable = [
-        'title', 'content', 'url','author'
+        'title', 'content', 'url','author','isPublished'
     ];
 
+    protected $with = ['author','claps','comments'];
 
+    
+
+    public function publish(){
+        return $this->isPublished = true; 
+    }
+
+    public function unPublish(){
+        return $this->isPublished = false; 
+    }
+
+    
     public function author(){
     	return $this->belongsTo('App\User','id');
     }
 
     public function comments()
     {
-        return $this->morphMany('App\Comment', 'commentable');
+        return $this->morphMany(Comment::class, 'commentable');
     }
 
 
     public function claps()
     {
-        return $this->morphMany('App\Clap', 'clapable');
+        return $this->morphMany(Clap::class, 'clapable');
     }
 
 
@@ -40,6 +52,18 @@ class Post extends Model
     //delete file
     public function dropImage($path){
         Storage::disk('mydisk')->delete($path);
+    }
+
+    //scopes
+    public function scopePublished($query)
+    {
+        return $query->where('isPublished', 1);
+    }
+
+
+    public function scopeUnPublished($query)
+    {
+        return $query->where('isPublished', 1);
     }
 
 }

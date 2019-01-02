@@ -14,6 +14,6 @@ class Lecture extends Model
 
 
     public function author(){
-    	return $this->belongsTo('App/User','id');
+    	return $this->belongsTo(User::class,'id');
     }
 }

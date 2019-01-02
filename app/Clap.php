@@ -18,6 +18,6 @@ class Clap extends Model
     }
 
     public function user(){
-    	return $this->belongsTo('App\User','clapper');
+    	return $this->belongsTo(User::class,'clapper');
     }
 }

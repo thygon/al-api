@@ -24,6 +24,8 @@ class BookController extends Controller
 
     //create book
     function newBook(Request $req){
+        $this->authorize('create',Book::class);
+
         $validator = Validator::make($req->all(),[
             'title'=>'required|max:20',
             'description'=>'required|max:255',
@@ -45,7 +47,7 @@ class BookController extends Controller
     	$user = Auth::user();
     	$user->mybooks()->save($book);
 
-    	return response()->json(['status'=>'success','message'=>'Book created!']);
+    	return response()->json(['success'=>true,'message'=>'Book created!']);
     }
 
     //updateBook
@@ -58,6 +60,8 @@ class BookController extends Controller
     	]);
         $file = $req->file('book');
         $book = Book::find($id);
+
+        $this->authorize('update',$book);
     	//remove book in the link and replace it with new
         if($file != null){
             //delete the existing and replace
@@ -73,7 +77,7 @@ class BookController extends Controller
     	$book->description = $req->get('description');
 
     	$book->save();
-    	return response()->json(['status'=>'success','message'=>'Book updated!']);
+    	return response()->json(['success'=>true,'message'=>'Book updated!']);
 
     }
 
@@ -81,12 +85,14 @@ class BookController extends Controller
     function deleteBook($id){
     	//delete book in link--folder
     	$book = Book::find($id);
+        $this->authorize('update',$book);
+        
         if($book){
             $book->dropBook($book->link);
             $book->delete(); 
         }
     	
-    	return response()->json(['status'=>'success','message'=>'Book deleted!']);
+    	return response()->json(['success'=>true,'message'=>'Book deleted!']);
     }
 
 }

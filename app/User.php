@@ -29,30 +29,39 @@ class User extends Authenticatable implements JWTSubject
         'password', 'remember_token',
     ];
 
+    protected $with = ['profile'];
+
+
+
     //relatives
+    public function profile(){
+        return $this->hasOne(Profile::class);
+    }
     public function mybooks(){
-        return $this->hasMany('App\Book','author');
+        return $this->hasMany(Book::class,'author');
     }
 
     public function posts(){
-        return $this->hasMany('App\Post','author');
+        return $this->hasMany(Post::class,'author');
     }
 
     public function articles(){
-        return $this->hasMany('App\Article','author');
+        return $this->hasMany(Article::class,'author');
     }
 
     public function lectures(){
-        return $this->hasMany('App\Lecture','author');
+        return $this->hasMany(Lecture::class,'author');
     }
 
     public function comments(){
-        return $this->hasMany('App\Comment','commenter');
+        return $this->hasMany(Comment::class,'commenter');
     }
 
     public function claps(){
-        return $this->hasMany('App\Clap','clapper');
+        return $this->hasMany(Clap::class,'clapper');
     }
+
+    
 
     //jwt
     public function getJWTIdentifier(){

@@ -18,7 +18,7 @@ use Illuminate\Http\Request;
 Route::prefix('/app')->group(function () {
 
     Route::get('/', function () {
-       return 'Hello from api';
+       return ['App'=>'Al-hashmi App api','Message'=>'Working great'];
     });
 
     //user
@@ -26,6 +26,8 @@ Route::prefix('/app')->group(function () {
     Route::post('/login','AuthController@login');
     Route::post('/logout','AuthController@logout')->middleware('jwt.auth');
     Route::get('/user','AuthController@user')->middleware('jwt.auth');
+    Route::post('/user/profile','AuthController@setProfile')->middleware('jwt.auth');
+    Route::post('/recover','AuthController@recover');
 
     //post
     Route::get('/posts','PostController@posts');
@@ -34,11 +36,12 @@ Route::prefix('/app')->group(function () {
     Route::put('/post/update/{id}','PostController@updatePost')->middleware('jwt.auth');
     Route::delete('/post/delete/{id}','PostController@deletePost')->middleware('jwt.auth');
 
+    
     //comment
     Route::post('/comment/{id}','PostController@comment')->middleware('jwt.auth');
-    Route::put('/comment/update/{id}','PostController@updateComment')
+    Route::post('/comment/update/{id}','PostController@updateComment')
            ->middleware('jwt.auth');
-    Route::delete('/comment/delete/{id}','PostController@deleteComment')
+    Route::post('/comment/delete/{id}','PostController@deleteComment')
            ->middleware('jwt.auth');
 
     //clap
@@ -56,8 +59,8 @@ Route::prefix('/app')->group(function () {
     Route::get('/articles','ArticleController@articles');
     Route::get('/article/{id}','ArticleController@aArticle');
     Route::post('/article/new','ArticleController@newArticle')->middleware('jwt.auth');
-    Route::put('/article/{id}/update','ArticleController@updateArticle')->middleware('jwt.auth');
-    Route::delete('/article/{id}/delete','ArticleController@deleteArticle')->middleware('jwt.auth');
+    Route::put('/article/update/{id}','ArticleController@updateArticle')->middleware('jwt.auth');
+    Route::delete('/article/delete/{id}','ArticleController@deleteArticle')->middleware('jwt.auth');
 
     //lecture
     Route::get('/lectures','PostController@lectures');
