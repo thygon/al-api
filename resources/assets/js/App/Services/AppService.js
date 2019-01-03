@@ -2,12 +2,15 @@ import axios from 'axios';
 import {get} from './../helpers';
 
 export const AppService = {
-	path:"http://127.0.0.1:8000",
-	api:"http://127.0.0.1:8000/api/app/",
+	path:"http://app.alhashmiapp.com",
+	api:"http://app.alhashmiapp.com/api/app/",
 	header(){
        return {
        	'Access-Control-Allow-Origin': '*',
-        'Authorization': 'Bearer '+get('authtoken')
+        'Authorization': 'Bearer '+get('authtoken'),
+        "Access-Control-Allow-Methods": "GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization, Accept"
        }
 	},
 
@@ -18,7 +21,7 @@ export const AppService = {
 
 		}else{
 
-			return axios.get(this.api+url+'/'+id);
+			return axios.get(this.api+url+'/'+id,{headers:this.header()});
 
 		}
 	},

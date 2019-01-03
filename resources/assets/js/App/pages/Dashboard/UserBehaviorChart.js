@@ -31,8 +31,8 @@ let responsiveOptions = [
 const UserBehaviorChart = () => (
   <div className="card ">
     <div className="header">
-      <h4 className="title">2014 Sales</h4>
-      <p className="category">All products including Taxes</p>
+      <h4 className="title">Donations</h4>
+      <p className="category">All Donations</p>
     </div>
     <div className="content">
       <Chart data={data} options={options} responsiveOptions={responsiveOptions} type="Bar" className="ct-chart" />
