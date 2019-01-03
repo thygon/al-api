@@ -29,7 +29,7 @@ class ArticleController extends Controller
 
         $validator = Validator::make($req->all(),
                                 ['title'=>'required',
-                                'content'=>'required|max:255'
+                                'content'=>'required|max:2000'
                                 ]);
 
 
@@ -59,7 +59,7 @@ class ArticleController extends Controller
 
     	$validator = Validator::make($req->all(),
                                 ['title'=>'required',
-                                'content'=>'required|max:255'
+                                'content'=>'required|max:2000'
                                 ]);
 
 

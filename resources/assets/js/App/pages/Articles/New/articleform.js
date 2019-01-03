@@ -63,13 +63,16 @@ const  validate = (values) =>{
 	const errors = {};
 	if (!values.title) {
 	    errors.title = 'Title is required';
+	 }else if (values.title.length > 60) {
+	    errors.title = 'Title is too long';
 	 }
 
 	 if (!values.content) {
-	    errors.content = 'Article Content is required';
-	 }else if(values.content.length > 255){
+	    errors.content = 'Post Content is required';
+	 }else if(values.content.length > 2000){
         errors.content = 'Too Long Content';
 	 }
+
 
 	  return errors;
 }

@@ -28,7 +28,7 @@ class BookController extends Controller
 
         $validator = Validator::make($req->all(),[
             'title'=>'required|max:20',
-            'description'=>'required|max:255',
+            'description'=>'required|max:300',
             'book' => 'required'
         ]); 
     	

@@ -17,7 +17,7 @@ class CreateLecturesTable extends Migration
         Schema::create('lectures', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
-            $table->string('description');
+            $table->text('description');
             $table->string('link');
             $table->integer('author')->unsigned();
             $table->foreign('author')->references('id')->on('users');

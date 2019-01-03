@@ -35,8 +35,8 @@ class PostController extends Controller
        $this->authorize('create',Post::class);
          
        $validator = Validator::make($req->all(),
-                                ['title'=>'required|max:255',
-                                'content'=>'required|max:255'
+                                ['title'=>'required|max:60',
+                                'content'=>'required|max:2000'
                                 ]);
 
 
@@ -79,8 +79,8 @@ class PostController extends Controller
 
 
     	$validator = Validator::make($req->all(),
-                                ['title'=>'required|max:255',
-                                'content'=>'required'
+                                ['title'=>'required|max:60',
+                                'content'=>'required|max:2000'
                                 ]);
 
         $image = $req->file('image'); 
@@ -131,7 +131,7 @@ class PostController extends Controller
     function comment(Request $req,$id){
     	$validator = Validator::
                    make($req->all(),
-                        ['body'=>'required|max:255'
+                        ['body'=>'required|max:100'
                         ]);
 
 
@@ -155,7 +155,7 @@ class PostController extends Controller
     function updateComment(Request $req, $id){
     	$validator = Validator::
                    make($req->all(),
-                        ['body'=>'required|max:255'
+                        ['body'=>'required|max:100'
                         ]);
 
 
