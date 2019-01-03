@@ -103,7 +103,7 @@ const  validate = (values) =>{
 
 	 if (!values.content) {
 	    errors.content = 'Article Content is required';
-	 }else if(values.content.length > 255){
+	 }else if(values.content.length > 2000){
         errors.content = 'Too Long Content';
 	 }
 

@@ -10,7 +10,7 @@ const  validate = (values) =>{
 	    errors.title = 'Title is required';
 	 }
 
-	 if (!values.title.length > 60) {
+	 if (values.title && values.title.length > 60) {
 	    errors.title = 'Title is too long';
 	 }
 

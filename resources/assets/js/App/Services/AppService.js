@@ -2,6 +2,7 @@ import axios from 'axios';
 import {get} from './../helpers';
 
 export const AppService = {
+	//app.alhashmiapp.com
 	path:"http://app.alhashmiapp.com",
 	api:"http://app.alhashmiapp.com/api/app/",
 	header(){
