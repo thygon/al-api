@@ -25,6 +25,13 @@ class All extends Component {
     		}
     		)
     }
+
+    trunStr(str,num ){
+       if (str.length > num) {
+         return str.slice(0, num) + "...";}
+       else {
+        return str;}
+    }
     deleteBook(id){
     	var y = confirm('Sure to delete');
     	if(y){
@@ -43,6 +50,11 @@ class All extends Component {
     	}
     }
 
+    goToEdit(id){
+         const {history } = this.props;
+        history.push(`/books/edit/${id}`);
+    }
+
     render() {
     	const books = this.state.books;
     	const display = (
@@ -50,7 +62,7 @@ class All extends Component {
 			  	<tr key={book.id}>
 			      <th scope="row">{book.id}</th>
 			      <td>{book.title}</td>
-			      <td><p>{book.description}</p></td>
+			      <td><p>{this.trunStr(book.description,70)}</p></td>
 			      <td>
 			       <div className='btn-group-sm'>
 			          <button type="button" className="btn btn-primary"

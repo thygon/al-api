@@ -40,7 +40,7 @@ export default class File extends Component{
 
   fileInputChanged(e,file){
     var file = file ||  e.target.files[0],
-        pattern = (this.props.accept == 'image' )? /image-*/ :'', 
+        pattern = (this.props.accept == 'image' )? /image-*/ :'application/pdf', 
         reader = new FileReader();
 
         if (!file.type.match(pattern)) {
@@ -83,12 +83,17 @@ export default class File extends Component{
               onDrop={this.onDrop}
               style={{outlineColor: borderColor}}
            >
+            { this.props.accept ==='image' && 
             <img src={state.image} className={state.loaded && 'loaded'}/>
+          }
             <input {...input}
                    className={ 'form-control'}
                    onChange ={this.fileInputChanged}
                    type='file'
                    />
+           {this.props.accept=== 'document' && state.loaded &&
+            <span>file is selected successfully!</span>
+         }
 
            { touched && error &&
               <span className="error" htmlFor={input.name}>{error}</span>

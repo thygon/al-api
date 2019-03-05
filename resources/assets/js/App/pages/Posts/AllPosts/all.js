@@ -79,6 +79,13 @@ export default class All extends Component {
         history.push(`/posts/edit/${id}`);
      }
 
+     trunStr(str,num ){
+       if (str.length > num) {
+         return str.slice(0, num) + "...";}
+       else {
+        return str;}
+    }
+
      render() {
         const {filter} = this.props;
         let posts = this.filterPosts(filter.toLowerCase());
@@ -91,7 +98,7 @@ export default class All extends Component {
                                alt="..."/>
                               <div className="caption">
                                 <h3>{post.title}</h3>
-                                <p onClick={() => this.readPost(post.id)}>{post.content}</p>
+                                <p onClick={() => this.readPost(post.id)}>{this.trunStr(post.content, 100)}</p>
                                 <p>
                                 <div className="btn-group">
                                     <button onClick={()=>this.editPost(post.id)} type="button" className="btn btn-secondary">

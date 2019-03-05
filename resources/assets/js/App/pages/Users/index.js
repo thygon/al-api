@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 
 const Users = ({ className }) => {
     return (
@@ -6,10 +6,5 @@ const Users = ({ className }) => {
     );
 };
 
-Users.displayName = 'Users';
-
-Users.propTypes = {
-    className: PropTypes.string,
-};
 
 export default Users;

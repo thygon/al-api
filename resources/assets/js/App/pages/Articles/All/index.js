@@ -33,6 +33,13 @@ class All extends Component {
     		)
     }
 
+    trunStr(str,num ){
+       if (str.length > num) {
+         return str.slice(0, num) + "...";}
+       else {
+        return str;}
+    }
+
     filtered(){
      let filters = this.state.filters;
      let articles = this.state.articles;
@@ -110,7 +117,7 @@ class All extends Component {
 	    	     	   <div className='panel-body'>
 	    	     	     <div onClick={()=>this.goToRead(article.id)}>
                           	<h3>{article.title}</h3>
-	    	     	      	{article.content}
+	    	     	      	{this.trunStr(article.content,100)}
 	    	     	     </div>
 	    	     	      
 	    	     	     <p>

@@ -1,10 +1,13 @@
 import axios from 'axios';
 import {get} from './../helpers';
+const ur ='http://127.0.0.1:8000';
 
 export const AppService = {
 	//app.alhashmiapp.com
-	path:"http://app.alhashmiapp.com",
-	api:"http://app.alhashmiapp.com/api/app/",
+	//127.0.0.1:8000
+	path:ur,
+	api: ur +'/api/app/',
+
 	header(){
        return {
        	'Access-Control-Allow-Origin': '*',
@@ -28,7 +31,7 @@ export const AppService = {
 	},
 
 	post(url,data){
-   
+
       return axios.post(this.api+url,data,{headers:this.header()});
 
 	},

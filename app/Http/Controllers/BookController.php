@@ -54,10 +54,15 @@ class BookController extends Controller
 
     function updateBook(Request $req, $id){
 
-    	$req->validate($req->all(),[
-    		'title'=>'required',
-    		'content'=>'required'
-    	]);
+        $validator = Validator::make($req->all(),[
+            'title'=>'required|max:20',
+            'description'=>'required|max:300',
+        ]); 
+        
+        if($validator->fails()){
+            return response()->json($validator->errors());
+        }
+
         $file = $req->file('book');
         $book = Book::find($id);
 

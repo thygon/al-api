@@ -35,7 +35,7 @@ class User extends Authenticatable implements JWTSubject
 
     //relatives
     public function profile(){
-        return $this->hasOne(Profile::class);
+        return $this->hasOne(Profile::class,'user_id');
     }
     public function mybooks(){
         return $this->hasMany(Book::class,'author');

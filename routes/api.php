@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -20,6 +19,8 @@ Route::prefix('/app')->group(function () {
     Route::get('/', function () {
        return ['App'=>'Al-hashmi App api','Message'=>'Working great'];
     });
+    //ask
+    Route::post('/ask','AskController@ask');
 
     //user
     Route::post('/register','AuthController@register');
@@ -28,6 +29,10 @@ Route::prefix('/app')->group(function () {
     Route::get('/user','AuthController@user')->middleware('jwt.auth');
     Route::post('/user/profile','AuthController@setProfile')->middleware('jwt.auth');
     Route::post('/recover','AuthController@recover');
+    Route::post('/reset/{token}','AuthController@reset');
+
+    //admin get quiz notifications
+    Route::get('/notifies','AuthController@getNotifications')->middleware('jwt.auth');
 
     //post
     Route::get('/posts','PostController@posts');

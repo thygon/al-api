@@ -33,7 +33,6 @@ export default class CreateBook extends Component{
 	}
 
 	getBookFile(book){
-		console.log(book);
 		this.setState({book});
 	}
 

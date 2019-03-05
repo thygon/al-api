@@ -4,6 +4,8 @@ import { toggleMobileNavVisibility } from '../../reducers/Layout';
 import { Navbar, Nav, NavItem, NavDropdown, MenuItem, FormGroup, FormControl } from 'react-bootstrap';
 import Logout from './../auth/logout';
 import {logout} from '../../reducers/Auth';
+import Notifications from './Notifications';
+
 
 const Header = ({
   showMobileMenu,
@@ -31,20 +33,7 @@ const Header = ({
           </FormGroup>
         </Navbar.Form>
         <Nav pullRight>
-          <NavDropdown title={<i className="fa fa-globe" />} id="basic-nav-dropdown">
-            <MenuItem>Action</MenuItem>
-            <MenuItem>Another action</MenuItem>
-            <MenuItem>Something else here</MenuItem>
-            <MenuItem divider />
-            <MenuItem>Separated link</MenuItem>
-          </NavDropdown>
-          <NavDropdown title="Notifications" id="right-nav-bar">
-            <MenuItem>Action</MenuItem>
-            <MenuItem>Another action</MenuItem>
-            <MenuItem>Something else here</MenuItem>
-            <MenuItem divider />
-            <MenuItem>Separated link</MenuItem>
-          </NavDropdown>
+          <Notifications/>
           <NavItem>{isAuthenticated && <Logout onLogoutClick={() => dispatch(logout())}/>}</NavItem>
         </Nav>
       </Navbar.Collapse>
@@ -59,5 +48,6 @@ const mapDispatchToProp = dispatch => ({
   dispatch,
   toggleMobileNavVisibility: () => dispatch(toggleMobileNavVisibility())
 });
+
 
 export default connect(mapStateToProp, mapDispatchToProp)(Header);

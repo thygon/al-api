@@ -13,6 +13,8 @@ use App\Profile;
 use JWTFactory;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use DB;
+use Carbon;
 
 class AuthController extends Controller
 {  
@@ -128,17 +130,51 @@ class AuthController extends Controller
             $error_message = "Your email address was not found.";
             return response()->json(['success' => false, 'message' => ['email'=> $error_message]], 401);
         }
-        try {
-            Password::sendResetLink($request->only('email'), function (Message $message) {
-                $message->subject('Your Password Reset Link');
-            });
-        } catch (\Exception $e) {
-            //Return with error
-            $error_message = $e->getMessage();
-            return response()->json(['success' => false, 'message' => $error_message], 401);
-        }
-        return response()->json([
-            'success' => true, 'data'=> ['message'=> 'A reset email has been sent! Please check your email.']
+
+        //generate token
+        $resetToken = str_random(64);
+
+        //store the token
+        DB::table('password_resets')->insert([
+            'email'=> $user->email,
+            'token'=> $token,
+            'created_at'=>Carbon::now()
         ]);
+
+        return response()->json(['success' => true, 'token'=> $resetToken,'message'=> "Reset your password!"]);
+        
+    }
+
+    public function reset(Request $request,$token){
+
+        $validator = Validator::make($request->all(), [
+            'newpassword'=> 'required|min:6'
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors());
+        }
+
+        //validate token
+        $user = DB::table('password_resets')
+                ->where('token',$token)->first();
+
+       if($user){
+           
+           $newUser = User::where('email',$user->email)->first();
+
+           if($newUser){
+            $newUser->password = Hash::make($request->get('newpassword'));
+            $newUser->save();
+
+            return response()->json(['success'=>true,'message'=>'You have a new Password!']);
+           }
+       }
+
+       return response()->json(['success'=>false,'message'=>'Couldn`t reset password!']);
+
+    }
+
+    public function getNotifications(){
+     return response()->json(Auth::user()->notifications);
     }
 }

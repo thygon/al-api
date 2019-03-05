@@ -70,7 +70,7 @@ const  validate = (values) =>{
 	 if (!values.content) {
 	    errors.content = 'Post Content is required';
 	 }else if(values.content.length > 2000){
-        errors.content = 'Too Long Content';
+        errors.content = 'Too Long Content, 2000 characters allowed!';
 	 }
 
 
